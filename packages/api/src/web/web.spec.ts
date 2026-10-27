@@ -51,6 +51,68 @@ jest.mock('../auth', () => ({
 }));
 
 describe('web.ts', () => {
+  describe('Serper gateway credential binding', () => {
+    const savedKey = process.env.SERPER_API_KEY;
+    const savedUrl = process.env.SERPER_SEARCH_URL;
+
+    afterEach(() => {
+      if (savedKey == null) {
+        delete process.env.SERPER_API_KEY;
+      } else {
+        process.env.SERPER_API_KEY = savedKey;
+      }
+      if (savedUrl == null) {
+        delete process.env.SERPER_SEARCH_URL;
+      } else {
+        process.env.SERPER_SEARCH_URL = savedUrl;
+      }
+    });
+
+    it('authenticates a deployment-owned gateway URL and key together', async () => {
+      process.env.SERPER_API_KEY = 'deployment-key';
+      process.env.SERPER_SEARCH_URL = 'https://gateway.example/search';
+
+      const result = await loadWebSearchAuth({
+        userId: 'user',
+        webSearchConfig: {
+          searchProvider: SearchProviders.SERPER,
+          scraperProvider: ScraperProviders.KEENABLE,
+          rerankerType: RerankerTypes.NONE,
+          serperApiKey: '${SERPER_API_KEY}',
+          serperSearchUrl: '${SERPER_SEARCH_URL}',
+          serperAuthHeader: 'Authorization',
+          safeSearch: SafeSearchTypes.MODERATE,
+        },
+        loadAuthValues: async ({ authFields }) =>
+          Object.fromEntries(authFields.map((field) => [field, process.env[field] ?? ''])),
+      });
+
+      expect(result.authenticated).toBe(true);
+      expect(result.authResult.serperSearchUrl).toBe('https://gateway.example/search');
+      expect(result.authResult.serperApiKey).toBe('deployment-key');
+      expect(result.authResult.serperAuthHeader).toBe('Authorization');
+    });
+
+    it('fails closed when a stored URL cannot receive the environment key', async () => {
+      process.env.SERPER_API_KEY = 'deployment-key';
+
+      const result = await loadWebSearchAuth({
+        userId: 'user',
+        webSearchConfig: {
+          searchProvider: SearchProviders.SERPER,
+          scraperProvider: ScraperProviders.KEENABLE,
+          rerankerType: RerankerTypes.NONE,
+          serperApiKey: '${SERPER_API_KEY}',
+          serperSearchUrl: 'https://other.example/search',
+          safeSearch: SafeSearchTypes.MODERATE,
+        },
+        loadAuthValues: async () => ({ SERPER_API_KEY: 'deployment-key' }),
+      });
+
+      expect(result.authenticated).toBe(false);
+      expect(result.authResult.serperApiKey).toBeUndefined();
+    });
+  });
   describe('extractWebSearchEnvVars', () => {
     it('should return empty array if config is undefined', () => {
       const result = extractWebSearchEnvVars({

@@ -1,0 +1,29 @@
+ARG BASE_IMAGE=registry.librechat.ai/librechat-ai/librechat-dev@sha256:fefb2c64cc2ed55cee0c1f7e7f48a3168cc1d9be0ba0c6e9008b12a5a709c728
+FROM ${BASE_IMAGE} AS build
+USER root
+RUN npm install --prefix /opt/serper --no-audit --no-fund \
+    tsdown@0.22.2 @rollup/plugin-replace@6.0.2 \
+    jest@30.2.0 babel-jest@30.2.0 @babel/preset-env@7 @babel/preset-typescript@7 \
+    babel-plugin-replace-ts-export-assignment@0.0.2 \
+    @types/js-yaml@4.0.9 openapi-types@12.1.3 @types/bun@1.2.15 @types/multer@1.4.12 \
+    @types/jest@29.5.2 jest-junit@17.0.0 prettier@3.6.2 && \
+    for package in /opt/serper/node_modules/* /opt/serper/node_modules/@*/*; do \
+      name="${package#/opt/serper/node_modules/}"; \
+      if [ "$name" != ".bin" ] && [ ! -e "/app/node_modules/$name" ]; then \
+        mkdir -p "$(dirname "/app/node_modules/$name")"; \
+        ln -s "$package" "/app/node_modules/$name"; \
+      fi; \
+    done
+COPY packages/data-provider/src /app/packages/data-provider/src
+COPY packages/data-schemas/src /app/packages/data-schemas/src
+COPY packages/api/src /app/packages/api/src
+RUN cd /app/packages/data-provider && /opt/serper/node_modules/.bin/tsdown && \
+  node /app/node_modules/typescript/bin/tsc -p tsconfig.build.json && \
+    cd /app/packages/data-schemas && /opt/serper/node_modules/.bin/tsdown && \
+    cd /app/packages/api && /opt/serper/node_modules/.bin/tsdown
+
+FROM ${BASE_IMAGE}
+COPY --from=build /app/packages/data-provider/dist /app/packages/data-provider/dist
+COPY --from=build /app/packages/data-schemas/dist /app/packages/data-schemas/dist
+COPY --from=build /app/packages/api/dist /app/packages/api/dist
+COPY api/app/clients/tools/util/handleTools.js /app/api/app/clients/tools/util/handleTools.js

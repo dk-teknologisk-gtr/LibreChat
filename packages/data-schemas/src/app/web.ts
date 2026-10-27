@@ -11,6 +11,7 @@ export const webSearchAuth = {
   providers: {
     serper: {
       serperApiKey: 1 as const,
+      serperSearchUrl: 0 as const,
     },
     searxng: {
       searxngInstanceUrl: 1 as const,
@@ -36,6 +37,7 @@ export const webSearchAuth = {
     },
     serper: {
       serperApiKey: 1 as const,
+      serperSearchUrl: 0 as const,
     },
     tavily: {
       tavilyApiKey: 1 as const,
@@ -89,6 +91,7 @@ export const webSearchUrlApiKeys: ReadonlyMap<TWebSearchKeys, TWebSearchKeys> = 
   TWebSearchKeys,
   TWebSearchKeys
 >([
+  ['serperSearchUrl', 'serperApiKey'],
   ['searxngInstanceUrl', 'searxngApiKey'],
   ['firecrawlApiUrl', 'firecrawlApiKey'],
   ['jinaApiUrl', 'jinaApiKey'],

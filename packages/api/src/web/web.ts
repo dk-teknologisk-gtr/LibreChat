@@ -866,6 +866,17 @@ export async function loadWebSearchAuth({
   }
 
   const searchProvider = authResult.searchProvider ?? webSearchConfig?.searchProvider;
+  if (webSearchConfig?.serperAuthHeader != null) {
+    authResult.serperAuthHeader = webSearchConfig.serperAuthHeader;
+  }
+  if (
+    getCredentialSource(webSearchConfig?.serperSearchUrl) &&
+    (searchProvider === SearchProviders.SERPER || scraperProvider === ScraperProviders.SERPER) &&
+    (!authResult.serperSearchUrl || scraperProvider === ScraperProviders.SERPER)
+  ) {
+    authenticated = false;
+    delete authResult.serperApiKey;
+  }
   if (searchProvider !== SearchProviders.TAVILY) {
     authResult.safeSearch = webSearchConfig?.safeSearch ?? SafeSearchTypes.MODERATE;
   }

@@ -12,6 +12,7 @@ export interface WebSearchSSRFAgents {
 
 /** Resolved web-search fields that carry an outbound destination. */
 const WEB_SEARCH_URL_KEYS = [
+  'serperSearchUrl',
   'searxngInstanceUrl',
   'firecrawlApiUrl',
   'jinaApiUrl',
