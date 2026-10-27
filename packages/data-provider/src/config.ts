@@ -3831,6 +3831,8 @@ export const webSearchSchema = z.object({
   allowedAddresses: allowedAddressesSchema,
   serperApiKey: z.string().optional().default('${SERPER_API_KEY}'),
   serperApiKeyPreview: apiKeyPreviewSchema,
+  serperSearchUrl: z.string().optional(),
+  serperAuthHeader: z.enum(['X-API-KEY', 'Authorization']).optional(),
   searxngInstanceUrl: z.string().optional().default('${SEARXNG_INSTANCE_URL}'),
   searxngApiKey: z.string().optional().default('${SEARXNG_API_KEY}'),
   searxngApiKeyPreview: apiKeyPreviewSchema,

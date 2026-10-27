@@ -1540,6 +1540,8 @@ endpoints:
 #   cohereApiKey: '${COHERE_API_KEY}'
 #   # Search providers
 #   serperApiKey: '${SERPER_API_KEY}'
+#   serperSearchUrl: '${SERPER_SEARCH_URL}' # Optional gateway search URL; omit for public Serper.
+#   serperAuthHeader: 'Authorization' # Bearer auth for gateways; default is X-API-KEY.
 #   searxngInstanceUrl: '${SEARXNG_INSTANCE_URL}'
 #   searxngApiKey: '${SEARXNG_API_KEY}'
 #   # Tavily (search provider and/or scraper)

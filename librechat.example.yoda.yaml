@@ -1,0 +1,77 @@
+version: "1.3.18"
+
+webSearch:
+  searchProvider: "serper"
+  serperApiKey: "${SERPER_API_KEY}"
+  serperSearchUrl: "${SERPER_SEARCH_URL}"
+  serperAuthHeader: "Authorization"
+  scraperProvider: "keenable"
+  rerankerType: "none"
+
+endpoints:
+  google:
+    models:
+      - "gemini-4-argon"
+      - "gemini-3.8-flash"
+      - "gemini-pro-latest"
+      - "gemini-flash-latest"
+      - "gemini-flash-lite-latest"
+    titleConvo: true
+  openAI:
+    models:
+      - "gpt-6.1-terra"
+      - "gpt-6.1-sol"
+      - "gpt-6-luna"
+    titleConvo: true
+  anthropic:
+    models:
+      - "claude-sonnet-5-5"
+      - "claude-haiku-5-5"
+      - "claude-opus-5-5"
+      - "claude-fable-5-1"
+    titleConvo: true
+  custom:
+    - name: "Yoda Mistral"
+      apiKey: "${YODA_API_KEY}"
+      baseURL: "https://yoda.teknologisk.dk/public/api-gateway/mistral/v1"
+      models:
+        default:
+          - "mistral-large-latest"
+          - "mistral-medium-latest"
+          - "mistral-small-latest"
+          - "codestral-latest"
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: "Yoda Mistral"
+
+    - name: "Yoda Perplexity"
+      apiKey: "${YODA_API_KEY}"
+      baseURL: "https://yoda.teknologisk.dk/public/api-gateway/perplexity"
+      models:
+        default:
+          - "sonar"
+          - "sonar-pro"
+        fetch: false
+      titleConvo: false
+      modelDisplayLabel: "Yoda Perplexity"
+
+    - name: "Yoda xAI"
+      apiKey: "${YODA_API_KEY}"
+      baseURL: "https://yoda.teknologisk.dk/public/api-gateway/xai/v1"
+      models:
+        default:
+          - "grok-4.7"
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: "Yoda xAI"
+
+    - name: "Yoda Kyber"
+      apiKey: "${YODA_API_KEY}"
+      baseURL: "https://yoda.teknologisk.dk/public/api-gateway/yoda/v1"
+      models:
+        default:
+          - "yoda/qwen3.8-flash"
+          - "yoda/glm-5.3-flash"
+        fetch: true
+      titleConvo: true
+      modelDisplayLabel: "Yoda Kyber"

@@ -2,6 +2,7 @@ import type { SearchCategories } from 'librechat-data-provider';
 
 export type TWebSearchKeys =
   | 'serperApiKey'
+  | 'serperSearchUrl'
   | 'searxngInstanceUrl'
   | 'searxngApiKey'
   | 'firecrawlApiKey'

@@ -1,5 +1,6 @@
 const { logger, getTenantId } = require('@librechat/data-schemas');
 const { Calculator, createSearchTool, createCodeExecutionTool } = require('@librechat/agents');
+const axios = require('axios');
 const {
   checkAccess,
   createGitHubCompareTool,
@@ -13,6 +14,7 @@ const {
   selectMCPUpstreamTokenProvider,
   mcpToolPattern,
   loadWebSearchAuth,
+  createWebSearchTool,
   splitMCPToolKey,
   buildServerNameAliases,
   findShadowedServerNames,
@@ -408,14 +410,17 @@ const loadTools = async ({
       requestedTools[tool] = async () => {
         toolContextMap[tool] = buildWebSearchContext();
         dynamicToolContextMap[tool] = buildWebSearchDynamicContext(options.req?.turnStartedAt);
-        return createSearchTool({
-          ...result.authResult,
-          httpAgent,
-          httpsAgent,
-          onSearchResults,
-          onGetHighlights,
-          logger,
-        });
+        return createWebSearchTool(
+          {
+            ...result.authResult,
+            httpAgent,
+            httpsAgent,
+            onSearchResults,
+            onGetHighlights,
+            logger,
+          },
+          { createSearchTool, httpClient: axios },
+        );
       };
       continue;
     } else if (tool === ASK_USER_QUESTION_TOOL_NAME) {
